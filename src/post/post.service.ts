@@ -2,10 +2,12 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class PostService {
@@ -35,7 +37,7 @@ export class PostService {
         }
       })
     }
-  async create(createPostDto: CreatePostDto, userId: any) {
+  async create(createPostDto: CreatePostDto, userId?: any) {
     const { title, body } = createPostDto;
     await this.prismaService.post.create({ data: { title, body, userId } });
     return { data: 'Post Created' };

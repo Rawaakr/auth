@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-statefulset
+  labels:
+    app: postgresql-statefulset
+spec:
+  serviceName: 'postgresql-service'
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql-statefulset
+  template:
+    metadata:
+      labels:
+        app: postgresql-statefulset
+    spec:
+      containers:
+      - name: db-container
+        image: postgres:14.12-alpine3.20
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-password
+        - name: POSTGRES_DB
+          value: demo
+        volumeMounts:
+        - name: db-persistent-storage
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+  volumeClaimTemplates:
+  - metadata:
+      name: db-persistent-storage
+    spec:
+      accessModes: ['ReadWriteOnce']
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service
+spec:
+  selector:
+    app: postgresql-statefulset
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

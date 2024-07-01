@@ -1,0 +1,4 @@
+root: c:\users\gt-dell\demo 
+path: C:\Program Files\nodejs 
+arch: 64 
+proxy: none

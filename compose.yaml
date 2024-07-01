@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    image: authimg:latest
+    ports: 
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:Rk2210@postgresql:5432/demo
+      - SECRET_KEY=SECRET_KEY
+      - OTP_CODE=OTP_CODE
+    depends_on:
+      - postgresql
+    networks:
+      - mynetwork
+
+  postgresql:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Rk2210
+      POSTGRES_DB: demo 
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

@@ -1,0 +1,16 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: demo
+build:
+  artifacts:
+    - image: authimg
+      context: .
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  rawYaml:
+    - k8s/authapp-service.yaml
+    - k8s/authapp.yaml
+    - k8s/postgresql-secret.yaml
+    - k8s/postgresql.yaml

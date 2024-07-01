@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authapp-deployment
+  labels:
+    app: authapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authapp
+  template:
+    metadata:
+      labels:
+        app: authapp
+    spec:
+      containers:
+      - name: authapp-container
+        image: authimg:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-password
+        - name: DATABASE_NAME
+          value: "demo"
+        - name: POSTGRES_HOST
+          value: "postgresql-service"
+        - name: DATABASE_URL
+          value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):5432/$(DATABASE_NAME)"
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: secret-key
+        - name: OTP_CODE
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: otp-code
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"

@@ -5,7 +5,7 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { Request } from 'express';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-@ApiTags("Posts")
+@ApiTags("posts")
 @Controller('posts')
 export class PostController {
     constructor(private readonly PostService: PostService){}
@@ -13,7 +13,6 @@ export class PostController {
     getAll(){
         return this.PostService.getAll();
     }
-    @ApiBearerAuth()	
     @UseGuards(AuthGuard("jwt"))
     @Post("create")
     create(@Body() createPostDto : CreatePostDto,@Req() request : Request){
